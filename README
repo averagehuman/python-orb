@@ -1,0 +1,80 @@
+
+orb
+===
+
+A utility wrapper for pip_ and virtualenv_.
+
+install
+-------
+
+We assume that virtualenv_ is available, eg. in Ubuntu:
+
+    $ sudo apt-get install python-virtualenv
+
+pip_ need not be available - it is installed every time to a new environment.
+
+(this ensures that pip is the latest version).
+
+To install, use easy_install to install from pypi.python.org, or simply copy
+the orb script from the source distribution, eg.
+
+    $ sudo cp orb /usr/local/bin
+
+usage
+-----
+
+Create a virtualenv with the command
+
+   orb init myenv
+
+This creates a virtualenv called 'myenv.orb' and creates an empty '.orb'
+file within the virtualenv directory. Subsequent orb commands first search
+for the '.orb' file and from this file's location the virtualenv's bin directory
+is known. 
+
+To install packages to the env, run the 'orb install' command
+(from within the env directory):
+
+   cd myenv
+   orb install Pygments
+   orb install BeautifulSoup
+
+which calls 'pip_' to do the actual downloading and installation
+(pip_ having been installed as part of the init step).
+
+If passed a python script, orb will call it using the virtualenv's python
+
+   eg. orb setup.py install
+
+and if passed any command expression, orb will temporarily alter the
+environment (ie. pip's `source activate` step), eval the command,
+then restore (pip's `deactivate`).
+
+   eg. (Django): orb django-admin.py startproject myproj
+   eg. (Python prompt): orb python
+   eg. (Sphinx quickstart): orb sphinx-quickstart
+   eg. (Sphinx build): orb make html
+   eg. (Arbitrary command) orb ./myshellscript
+
+Other options:
+
+orb lib     - print location of env's site-packages directory
+orb ls      - list contents of env's site-packages directory
+orb rm      - remove items from env's site-packages directory
+orb link    - symlink from the virtual env's site-packages to a system package
+orb download PACKAGE [DEST]
+            - just download package, don't install
+
+
+create an env from a requirements file
+--------------------------------------
+
+::
+
+    orb init ~/my/source/package/REQUIREMENTS package-dev
+
+
+.. _virtualenv: http://pypi.python.org/pypi/virtualenv/
+.. _pip: http://pip.openplans.org/index.html
+
+
