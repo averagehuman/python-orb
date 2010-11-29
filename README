@@ -69,10 +69,20 @@ orb download PACKAGE [DEST]
 create an env from a requirements file
 --------------------------------------
 
-::
+Create an env called 'package-dev-environment.orb' and install requirements::
 
-    orb init ~/my/source/package/REQUIREMENTS package-dev
+    orb init ~/my/source/package/REQUIREMENTS package-dev-environment
 
+If the requirements file contains lines such as, for example:
+
+    #SYSTEM: psycopg2 mx PIL
+    #SYSTEM: nose
+
+then suitable symlinks to system packages are created within the env.
+
+
+Ian "deserves an award" Bicking
+-------------------------------
 
 .. _virtualenv: http://pypi.python.org/pypi/virtualenv/
 .. _pip: http://pip.openplans.org/index.html

@@ -106,6 +106,12 @@ usage () {
 
 case "$1" in
 "init")
+    # TODO: various YAGNI incantations, needs more work but the following are well used:
+    #
+    # new environment:
+    #     orb init myproj
+    # new environment + install requirements + (if requirements is from a source repo) install editable package:
+    #     orb init /path/to/a/requirements/file myproj
     if [ ! $2 ]; then
         if [ -f "REQUIREMENTS" ]; then
             orb init REQUIREMENTS
@@ -115,6 +121,7 @@ case "$1" in
         fi
     else
         if [ "$2" = "--help" ]; then
+            # TODO: lazy bastard...
             virtualenv $@ | sed "s/Usage: virtualenv/Usage: orb init/g"
             exit
         elif [ -f $2 ]; then
@@ -222,6 +229,8 @@ case "$1" in
                     if [ -f $reqfile ]; then
                         cd $orbname
                         orb install -r $reqfile
+                        # system links, eg. lines like: #SYSTEM: PIL, psycopg2, mx
+                        grep "^#SYSTEM: " $reqfile | sed "s/^#SYSTEM: //" | xargs orb link
                     fi
                 fi
             fi
