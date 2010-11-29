@@ -3,7 +3,7 @@
 import os
 from distutils.core import setup
 
-__version__ = '0.7'
+__version__ = '0.7.1'
 projectdir = os.path.dirname(os.path.abspath(__file__))
 
 requires = []
