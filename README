@@ -75,8 +75,8 @@ Create an env called 'package-dev-environment.orb' and install requirements::
 
 If the requirements file contains lines such as, for example:
 
-    #SYSTEM: psycopg2 mx PIL
-    #SYSTEM: nose
+    #SYSTEM: psycopg2 mx
+    #SYSTEM: PIL
 
 then suitable symlinks to system packages are created within the env.
 
