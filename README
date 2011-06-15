@@ -81,8 +81,8 @@ If the requirements file contains lines such as, for example:
 then suitable symlinks to system packages are created within the env.
 
 
-Ian "deserves an award" Bicking
--------------------------------
+Ian Bicking
+-----------
 
 .. _virtualenv: http://pypi.python.org/pypi/virtualenv/
 .. _pip: http://pip.openplans.org/index.html
