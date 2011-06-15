@@ -317,8 +317,10 @@ link?.?)
             exit 1
         fi
         dst="$envlib/`basename $src`"
-        echo "linking $src"
-        ln -s $src $dst
+        if [ ! -h $dst ]; then
+            echo "linking $src"
+            ln -s $src $dst
+        fi
     done
 ;;
 rm)
