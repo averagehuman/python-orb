@@ -1,4 +1,3 @@
-
 orb
 ===
 
@@ -39,8 +38,7 @@ To install packages to the env, run the 'orb install' command
    orb install Pygments
    orb install BeautifulSoup
 
-which calls 'pip_' to do the actual downloading and installation
-(pip_ having been installed as part of the init step).
+which calls 'pip_' to do the actual downloading and installation.
 
 If passed a python script, orb will call it using the virtualenv's python
 
