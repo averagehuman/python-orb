@@ -12,10 +12,11 @@ We assume that virtualenv_ is available, eg. in Ubuntu:
 
 pip_ need not be available - it is installed every time to a new environment.
 
-(this ensures that pip is the latest version).
+To install, use easy_install to install from pypi.python.org::
 
-To install, use easy_install to install from pypi.python.org, or simply copy
-the orb script from the source distribution, eg.
+    easy_install -Z orb
+    
+or simply copy the orb script from the source distribution, eg. ::
 
     $ sudo cp orb /usr/local/bin
 
@@ -56,31 +57,13 @@ then restore (pip's `deactivate`).
 
 Other options:
 
-orb lib     - print location of env's site-packages directory
 orb ls      - list contents of env's site-packages directory
-orb rm      - remove items from env's site-packages directory
 orb link    - symlink from the virtual env's site-packages to a system package
 orb download PACKAGE [DEST]
             - just download package, don't install
 
 
-create an env from a requirements file
---------------------------------------
 
-Create an env called 'package-dev-environment.orb' and install requirements::
-
-    orb init ~/my/source/package/REQUIREMENTS package-dev-environment
-
-If the requirements file contains lines such as, for example:
-
-    #SYSTEM: psycopg2 mx
-    #SYSTEM: PIL
-
-then suitable symlinks to system packages are created within the env.
-
-
-Ian Bicking
------------
 
 .. _virtualenv: http://pypi.python.org/pypi/virtualenv/
 .. _pip: http://pip.openplans.org/index.html

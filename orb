@@ -106,135 +106,28 @@ usage () {
 
 case "$1" in
 "init")
-    # TODO: various YAGNI incantations, needs more work but the following are well used:
-    #
-    # new environment:
-    #     orb init myproj
-    # new environment + install requirements + (if requirements is from a source repo) install editable package:
-    #     orb init /path/to/a/requirements/file myproj
-    if [ ! $2 ]; then
-        if [ -f "REQUIREMENTS" ]; then
-            orb init REQUIREMENTS
-        else
-            echo "ERROR: missing env name or requirements file"
-            exit 1
-        fi
-    else
-        if [ "$2" = "--help" ]; then
-            # TODO: lazy bastard...
-            virtualenv $@ | sed "s/Usage: virtualenv/Usage: orb init/g"
-            exit
-        elif [ -f $2 ]; then
-            # create from requirements file
-            reqfiledir=`dirname $2`
-            reqfile=`basename $2`
-            reqfile="`cd $reqfiledir; pwd`/$reqfile"
-            reqfiledir=`dirname $reqfile`
-            if [ -d "$reqfiledir/.git" ]; then
-                prefix="git"
-                branch="master"
-            elif [ -d "$reqfiledir/.hg" ]; then
-                prefix="hg"
-                branch="tip"
-            fi
-            if [ $prefix ] && [ -f "$reqfiledir/setup.py" ]; then
-                # requirements file is from an installable repo
-                eggname=`basename $reqfiledir`
-                if [ $3 ]; then
-                    envname=$3
-                else
-                    envname=$branch
-                fi
-                repo="$prefix+file://$reqfiledir@$branch#egg=$eggname"
-                # install repo
-                orb init $repo $envname $reqfile
-            else
-                # the requirements file is "standalone"
-                if [ $3 ]; then
-                    envname=$3
-                else
-                    envname=`basename $reqfile`
-                fi
-                orb init $envname $reqfile
-            fi
-        else
-            # either a name or a pip style url (hg+http://...@branch#egg=envname)
-            shift
-            url=`echo $1 | sed -n '/^\(hg\|git\|svn\)\+/p'`
-            if [ $url ]; then
-                eggname=`echo $url | sed "s/.*#egg=//g"`
-                if [ ! $eggname ]; then
-                    echo "ERROR: bad url - missing #egg=..."
-                    exit 1
-                else
-                    if [ $2 ]; then
-                        # user override of default env name
-                        envname="$2"
-                    else
-                        envname=$eggname
-                    fi
-                    orb init $envname $3
-                    cd "$envname.orb"
-                    orb install -e $url
-                    cd src/$eggname
-                    if [ ! $3 ] && [ -f "REQUIREMENTS" ]; then
-                        # no reqfile given but the default one is present
-                        orb install -r REQUIREMENTS
-                    fi
-                    # if an envname was specified assume it's a branch name
-                    if [ $2 ]; then
-                        provider=`echo $url | sed "s/\+.*//g"`
-                        if [ $provider = "git" ]; then
-                            exists=`git branch | sed -n "/\b$envname\b/p" | sed "s/\s*//g"`
-                            if [ $exists ]; then
-                                if [ $exists = $envname ]; then
-                                    # if not equality then it must be eg. '* master', so no need to check out
-                                    git checkout $envname
-                                fi
-                            else
-                                git checkout -b $envname
-                            fi
-                        fi
-                    fi
-                fi
-            else
-                reqfile=$2
-                if [ ! $reqfile ] && [ -f "REQUIREMENTS" ]; then
-                    orb init REQUIREMENTS $1
-                    exit
-                fi
-                canonical_name $1
-                fname="$orbname/.orb"
-                echo $fname
-                if [ ! -f $fname ]; then
-                    echo ""
-                    echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-                    echo " virtualenv $orbname --no-site-packages"
-                    echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-                    echo ""
-                    virtualenv $orbname --no-site-packages
-                    touch $fname
-                fi
-                if [ ! -x "$orbname/bin/pip" ]; then
-                    echo ""
-                    echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-                    echo " $orbname/bin/easy_install pip"
-                    echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-                    echo ""
-                    $orbname/bin/easy_install pip
-                fi
-                if [ $reqfile ]; then
-                    dir=`dirname $reqfile`
-                    reqfile=`cd $dir;pwd`/`basename $reqfile`
-                    if [ -f $reqfile ]; then
-                        cd $orbname
-                        orb install -r $reqfile
-                        # system links, eg. lines like: #SYSTEM: PIL, psycopg2, mx
-                        grep "^#SYSTEM: " $reqfile | sed "s/^#SYSTEM: //" | xargs orb link
-                    fi
-                fi
-            fi
-        fi
+    if [ "$2" = "--help" ]; then
+        virtualenv $@ | sed "s/Usage: virtualenv/Usage: orb init/g"
+        exit
+    fi
+    canonical_name $2
+    fname="$orbname/.orb"
+    if [ ! -f $fname ]; then
+        echo ""
+        echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+        echo " virtualenv $orbname --no-site-packages"
+        echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+        echo ""
+        virtualenv $orbname --no-site-packages
+        touch $fname
+    fi
+    if [ ! -x "$orbname/bin/pip" ]; then
+        echo ""
+        echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+        echo " $orbname/bin/easy_install pip"
+        echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+        echo ""
+        $orbname/bin/easy_install pip
     fi
     ;;
 "install")
@@ -244,14 +137,23 @@ case "$1" in
         # TODO: proper help message
         $envbindir/pip $@ | sed "s/Usage: pip/Usage: orb install/g"
         exit
-    else
-        echo ""
-        echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-        echo " pip install $@"
-        echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-        echo ""
-        $envbindir/pip install --download-cache=$cachedir "$@"
     fi
+    echo ""
+    echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+    echo " pip install $@"
+    echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+    echo ""
+    $envbindir/pip install --download-cache=$cachedir "$@"
+#    if [ $reqfile ]; then
+#        dir=`dirname $reqfile`
+#        reqfile=`cd $dir;pwd`/`basename $reqfile`
+#        if [ -f $reqfile ]; then
+#            cd $orbname
+#            orb install -r $reqfile
+#            # system links, eg. lines like: #SYSTEM: PIL, psycopg2, mx
+#            grep "^#SYSTEM: " $reqfile | sed "s/^#SYSTEM: //" | xargs orb link
+#        fi
+#    fi
     ;;
 "download")
     locate_environment
