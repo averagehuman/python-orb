@@ -105,20 +105,35 @@ usage () {
 }
 
 case "$1" in
-"init")
-    if [ "$2" = "--help" ]; then
-        virtualenv $@ | sed "s/Usage: virtualenv/Usage: orb init/g"
+init)
+    pyversion=`python -c "import sys;print('%s.%s' % sys.version_info[:2])"`
+    shift
+    orb init$pyversion $@
+    ;;
+init?.?)
+    pyversion=`echo $1 | sed -n "s/init\([2-3]\.[0-9]\)/\1/p"`
+    if [ ! $pyversion ]; then
+        echo "invalid python version"
+        exit 1
+    fi
+    pyexe="python$pyversion"
+    command -v $pyexe >/dev/null 2>&1 || { echo >&2 "$pyexe not found"; exit 1; }
+    pyexe=`which $pyexe`
+    shift
+    if [ ! $1 -o $1 = "--help" ]; then
+        orb --help
         exit
     fi
-    canonical_name $2
+    canonical_name $1
     fname="$orbname/.orb"
+    shift
     if [ ! -f $fname ]; then
         echo ""
         echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-        echo " virtualenv $orbname --no-site-packages"
+        echo " virtualenv --no-site-packages --python=$pyexe $orbname"
         echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
         echo ""
-        virtualenv $orbname --no-site-packages
+        virtualenv --no-site-packages --python=$pyexe $orbname
         touch $fname
     fi
     if [ ! -x "$orbname/bin/pip" ]; then
@@ -207,7 +222,7 @@ link?.?)
     #ver=`echo "$1" | sed "s/link//g" | grep "^[2-3]\.[0-9]"`
     ver=`echo $1 | sed -n "s/link\([2-3]\.[0-9]\)/\1/p"`
     if [ ! $ver ]; then
-        echo "invalid python version: "
+        echo "invalid python version"
         exit 1
     fi
     shift
