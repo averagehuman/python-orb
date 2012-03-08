@@ -167,10 +167,10 @@ init?.?)
     if [ ! -f $fname ]; then
         echo ""
         echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-        echo " virtualenv --no-site-packages --python=$pyexe $orbname"
+        echo " virtualenv --python=$pyexe $orbname"
         echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
         echo ""
-        virtualenv --no-site-packages --python=$pyexe $orbname
+        virtualenv --python=$pyexe $orbname
         touch $fname
     fi
     if [ ! -x "$orbname/bin/pip" ]; then
