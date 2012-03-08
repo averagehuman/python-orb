@@ -93,15 +93,44 @@ activate () {
 }
 
 usage () {
+    echo "orb - virtualenv and pip facade"
+    echo ""
+    echo "First create a new environment with 'orb init [dest]', then"
+    echo "'cd dest.orb' and begin installing with 'orb install [package]'"
+    echo ""
     echo "Usage:"
-    echo "orb init [--help]"
-    echo "orb install [--help]"
-    echo "orb ls"
-    echo "orb lib"
-    echo "orb symlink EXISTING_ENV [NEW_ENV]"
-    echo "orb download PACKAGE [DEST]"
-    echo "orb *.py [OPTIONS]"
-    echo "orb [ANY SHELL COMMAND]"
+    echo "    orb init [DEST_DIRECTORY]"
+    echo "      - create a new virtualenv with --python=python"
+    echo ""
+    echo "    orb init2 [DEST_DIRECTORY]"
+    echo "      - create a new virtualenv with --python=python2.7"
+    echo ""
+    echo "    orb init3 [DEST_DIRECTORY]"
+    echo "      - create a new virtualenv with --python=python3.3"
+    echo ""
+    echo "    orb init?.? [DEST_DIRECTORY]"
+    echo "      - create a new virtualenv with --python=python?.?"
+    echo ""
+    echo "    orb install [PYTHON_PACKAGE]"
+    echo "      - install a package to the current environment with pip"
+    echo ""
+    echo "    orb ls"
+    echo "      - list contents of current environment's site-packages directory"
+    echo ""
+    echo "    orb lib"
+    echo "      - echo path of current environment's site-packages directory"
+    echo ""
+    echo "    orb link [PYTHON_PACKAGE]"
+    echo "      - symlink to a system python package"
+    echo ""
+    echo "    orb download PACKAGE [DEST]"
+    echo "      - download a package from pypi, but don't install"
+    echo ""
+    echo "    orb *.py [OPTIONS]"
+    echo "      - run a python script using the env's python"
+    echo ""
+    echo "    orb [ANY SHELL COMMAND]"
+    echo "      - activate the environment, run the command, then deactivate"
 }
 
 case "$1" in
@@ -109,7 +138,15 @@ init)
     pyversion=`python -c "import sys;print('%s.%s' % sys.version_info[:2])"`
     shift
     orb init$pyversion $@
-    ;;
+;;
+init2)
+    shift
+    orb init2.7 $@
+;;
+init3)
+    shift
+    orb init3.3 $@
+;;
 init?.?)
     pyversion=`echo $1 | sed -n "s/init\([2-3]\.[0-9]\)/\1/p"`
     if [ ! $pyversion ]; then
@@ -118,7 +155,7 @@ init?.?)
     fi
     pyexe="python$pyversion"
     command -v $pyexe >/dev/null 2>&1 || { echo >&2 "$pyexe not found"; exit 1; }
-    pyexe=`which $pyexe`
+    #pyexe=`which $pyexe`
     shift
     if [ ! $1 -o $1 = "--help" ]; then
         orb --help
@@ -144,8 +181,8 @@ init?.?)
         echo ""
         $orbname/bin/easy_install pip
     fi
-    ;;
-"install")
+;;
+install)
     locate_environment
     shift
     if [ "$1" = "--help" ]; then
@@ -159,18 +196,8 @@ init?.?)
     echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
     echo ""
     $envbindir/pip install --download-cache=$cachedir "$@"
-#    if [ $reqfile ]; then
-#        dir=`dirname $reqfile`
-#        reqfile=`cd $dir;pwd`/`basename $reqfile`
-#        if [ -f $reqfile ]; then
-#            cd $orbname
-#            orb install -r $reqfile
-#            # system links, eg. lines like: #SYSTEM: PIL, psycopg2, mx
-#            grep "^#SYSTEM: " $reqfile | sed "s/^#SYSTEM: //" | xargs orb link
-#        fi
-#    fi
-    ;;
-"download")
+;;
+download)
     locate_environment
     shift
     if [ ! $1 ]; then
@@ -189,11 +216,11 @@ init?.?)
     echo "orb: downloading $1"
     $envpip install $1 --download-cache=$cachedir --download=$dest
     ;;
-"lib")
+lib)
     locate_environment
     echo "$envlib"
     ;;
-"ls")
+ls)
     locate_environment
     #find $envdir/lib/python*/site-packages/* -maxdepth 0
     #for f in `find $envdir/lib/python*/site-packages/* -maxdepth 0 | sort`; do
@@ -211,20 +238,7 @@ init?.?)
     ;;
 link)
     # link to a system package or module
-    # default python version is the orb's python
     locate_environment
-    pyversion=`$envpython -c "import sys;print('%s.%s' % sys.version_info[:2])"`
-    shift
-    orb link$pyversion $@
-;;
-link?.?)
-    locate_environment
-    #ver=`echo "$1" | sed "s/link//g" | grep "^[2-3]\.[0-9]"`
-    ver=`echo $1 | sed -n "s/link\([2-3]\.[0-9]\)/\1/p"`
-    if [ ! $ver ]; then
-        echo "invalid python version"
-        exit 1
-    fi
     shift
     for m in $@; do
         m=`echo $m | sed "s/\.py$//g"`
@@ -257,17 +271,17 @@ parent)
     cd ..
     echo `pwd`
 ;;
-"test")
+test)
     locate_environment
     shift
     $envbindir/nosetests --with-doctest "$@"
-    ;;
+;;
 "--help")
     usage
-    ;;
+;;
 "")
     usage
-    ;;
+;;
 *)
     locate_environment
     ext=`echo $1 | sed 's/.*\.//g'`

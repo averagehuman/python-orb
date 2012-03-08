@@ -3,7 +3,7 @@
 import os
 from distutils.core import setup
 
-__version__ = '0.8'
+__version__ = '0.9'
 projectdir = os.path.dirname(os.path.abspath(__file__))
 readme = open("README").read()
 
@@ -13,7 +13,7 @@ setup(
     version=__version__,
     description="pip/virtualenv shell script wrapper",
     long_description=readme,
-    author="Djord Flanagan",
+    author="Jord Flanagan",
     author_email = "contact@devopsni.com",
     classifiers=[
                 "Intended Audience :: Developers",

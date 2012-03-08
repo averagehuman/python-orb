@@ -3,10 +3,16 @@ orb
 
 A utility wrapper for pip_ and virtualenv_.
 
+latest
+------
+
++ specify Python2 or Python3 as the python executable to use when
+  creating the environment
+
 install
 -------
 
-We assume that virtualenv_ is available, eg. in Ubuntu:
+virtualenv_ must be available, eg. in Ubuntu:
 
     $ sudo apt-get install python-virtualenv
 
@@ -25,7 +31,27 @@ usage
 
 Create a virtualenv with the command
 
-   orb init myenv
+    $ orb init myenv
+
+or
+
+    $ orb init2 myenv
+
+to use the latest Python2 as the executable, or
+
+    $ orb init3 myenv
+
+to use the latest Python3 as the executable, or
+
+    $ orb init?.? myenv
+
+(eg. orb init2.6 or orb init3.2) to specify a particular Python version as
+the executable.
+
+.. note::
+
+    the various python versions are assumed to be installed and on the user's
+    PATH
 
 This creates a virtualenv called 'myenv.orb' and creates an empty '.orb'
 file within the virtualenv directory. Subsequent orb commands first search
