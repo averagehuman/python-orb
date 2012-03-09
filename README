@@ -8,6 +8,8 @@ latest
 
 + specify Python2 or Python3 as the python executable to use when
   creating the environment
++ don't hardcode 2.7/3.3 as latest versions - determine it from the
+  python2/python3 commands
 
 install
 -------
