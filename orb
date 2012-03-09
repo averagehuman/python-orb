@@ -45,14 +45,14 @@ locate_environment () {
 orbname=
 
 canonical_name () {
-    #make absolute and add extension '.orb'
+    #make absolute
     dir=`dirname $1`
     name=`basename $1`
     orbname="`cd $dir; pwd`/$name"
-    ext=`echo $name | sed 's/.*\.//g'`
-    if [ $ext != "orb" ]; then
-        orbname="$orbname".orb
-    fi
+    #ext=`echo $name | sed 's/.*\.//g'`
+    #if [ $ext != "orb" ]; then
+    #    orbname="$orbname".orb
+    #fi
 }
 
 #from pip
@@ -140,17 +140,19 @@ init)
     orb init$pyversion $@
 ;;
 init2)
+    pyversion=`python2 -c "import sys;print('%s.%s' % sys.version_info[:2])"`
     shift
-    orb init2.7 $@
+    orb init$pyversion $@
 ;;
 init3)
+    pyversion=`python3 -c "import sys;print('%s.%s' % sys.version_info[:2])"`
     shift
-    orb init3.3 $@
+    orb init$pyversion $@
 ;;
 init?.?)
     pyversion=`echo $1 | sed -n "s/init\([2-3]\.[0-9]\)/\1/p"`
     if [ ! $pyversion ]; then
-        echo "invalid python version"
+        echo >&2 "invalid python version"
         exit 1
     fi
     pyexe="python$pyversion"
@@ -222,8 +224,6 @@ lib)
     ;;
 ls)
     locate_environment
-    #find $envdir/lib/python*/site-packages/* -maxdepth 0
-    #for f in `find $envdir/lib/python*/site-packages/* -maxdepth 0 | sort`; do
     for f in `ls $envlib`; do
         fname=`basename $f`
         case $fname in
@@ -240,6 +240,7 @@ link)
     # link to a system package or module
     locate_environment
     shift
+    ver=`$envpython -c "import sys;print('%s.%s' % sys.version_info[:2])"`
     for m in $@; do
         m=`echo $m | sed "s/\.py$//g"`
         src=`python$ver -c "import $m;print($m.__file__)" | sed "s/\.pyc$/\.py/g" | sed "s/\/__init__\.py$//g"`
