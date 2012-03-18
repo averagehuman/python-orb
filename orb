@@ -187,11 +187,6 @@ init?.?)
 install)
     locate_environment
     shift
-    if [ "$1" = "--help" ]; then
-        # TODO: proper help message
-        $envbindir/pip $@ | sed "s/Usage: pip/Usage: orb install/g"
-        exit
-    fi
     echo ""
     echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
     echo " pip install $@"
