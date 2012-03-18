@@ -55,7 +55,7 @@ the executable.
     the various python versions are assumed to be installed and on the user's
     PATH
 
-This creates a virtualenv called 'myenv.orb' and creates an empty '.orb'
+This creates a virtualenv called 'myenv' and creates an empty '.orb'
 file within the virtualenv directory. Subsequent orb commands first search
 for the '.orb' file and from this file's location the virtualenv's bin directory
 is known. 
