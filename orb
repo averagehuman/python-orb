@@ -49,47 +49,6 @@ canonical_name () {
     dir=`dirname $1`
     name=`basename $1`
     orbname="`cd $dir; pwd`/$name"
-    #ext=`echo $name | sed 's/.*\.//g'`
-    #if [ $ext != "orb" ]; then
-    #    orbname="$orbname".orb
-    #fi
-}
-
-#from pip
-deactivate () {
-
-    if [ -n "$_OLD_VIRTUAL_PATH" ] ; then
-        PATH="$_OLD_VIRTUAL_PATH"
-        export PATH
-        unset _OLD_VIRTUAL_PATH
-    fi
-
-    # This should detect bash and zsh, which have a hash command that must
-    # be called to get it to forget past commands.  Without forgetting
-    # past commands the $PATH changes we made may not be respected
-    if [ -n "$BASH" -o -n "$ZSH_VERSION" ] ; then
-        hash -r
-    fi
-
-    unset VIRTUAL_ENV
-}
-
-#from pip
-activate () {
-
-    VIRTUAL_ENV="$envdir"
-    export VIRTUAL_ENV
-
-    _OLD_VIRTUAL_PATH="$PATH"
-    PATH="$VIRTUAL_ENV/bin:$PATH"
-    export PATH
-
-    # This should detect bash and zsh, which have a hash command that must
-    # be called to get it to forget past commands.  Without forgetting
-    # past commands the $PATH changes we made may not be respected
-    if [ -n "$BASH" -o -n "$ZSH_VERSION" ] ; then
-        hash -r
-    fi
 }
 
 usage () {
@@ -130,7 +89,7 @@ usage () {
     echo "      - run a python script using the env's python"
     echo ""
     echo "    orb [ANY SHELL COMMAND]"
-    echo "      - activate the environment, run the command, then deactivate"
+    echo "      - activate the environment then run the command"
 }
 
 case "$1" in
@@ -282,16 +241,14 @@ test)
     locate_environment
     ext=`echo $1 | sed 's/.*\.//g'`
     if [ -f $1 ] && [ $ext = "py" ]; then
-    #if [[ -f $1 && ${1: -3} -eq ".py" ]]; then
         $envbindir/python "$@"
-    elif [ -f "$envbindir/$1" ]; then
-        $envbindir/$@
+    #elif [ -f "$envbindir/$1" ]; then
+    #    $envbindir/$@
     else
-        #echo "activating environment $envdir"
-        #. "$sourcefile"
-        activate
+        export VIRTUAL_ENV=$envdir
+        export PATH="$VIRTUAL_ENV/bin:$PATH"
+        unset PYTHON_HOME
         eval "$@"
-        deactivate
     fi
     ;;
 esac

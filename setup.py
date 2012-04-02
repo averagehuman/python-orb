@@ -3,7 +3,7 @@
 import os
 from distutils.core import setup
 
-__version__ = '0.9.3'
+__version__ = '0.9.4'
 projectdir = os.path.dirname(os.path.abspath(__file__))
 readme = open("README").read()
 
