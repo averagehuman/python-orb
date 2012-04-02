@@ -3,13 +3,11 @@ orb
 
 A utility wrapper for pip_ and virtualenv_.
 
-latest
-------
+description
+-----------
 
-+ specify Python2 or Python3 as the python executable to use when
-  creating the environment
-+ don't hardcode 2.7/3.3 as latest versions - determine it from the
-  python2/python3 commands
+A shell script facade for creating virtual python environments via virtualenv_
+and installing packages within the environment via pip_.
 
 install
 -------
@@ -60,8 +58,8 @@ file within the virtualenv directory. Subsequent orb commands first search
 for the '.orb' file and from this file's location the virtualenv's bin directory
 is known. 
 
-To install packages to the env, run the 'orb install' command
-(from within the env directory):
+To install packages to the env, run the 'orb install' command from within the
+env directory::
 
    cd myenv
    orb install Pygments
@@ -74,8 +72,7 @@ If passed a python script, orb will call it using the virtualenv's python
    eg. orb setup.py install
 
 and if passed any command expression, orb will temporarily alter the
-environment (ie. pip's `source activate` step), eval the command,
-then restore (pip's `deactivate`).
+environment (ie. pip's `source activate` step) before eval-ing the command::
 
    eg. (Django): orb django-admin.py startproject myproj
    eg. (Python prompt): orb python
@@ -89,8 +86,6 @@ orb ls      - list contents of env's site-packages directory
 orb link    - symlink from the virtual env's site-packages to a system package
 orb download PACKAGE [DEST]
             - just download package, don't install
-
-
 
 
 .. _virtualenv: http://pypi.python.org/pypi/virtualenv/
