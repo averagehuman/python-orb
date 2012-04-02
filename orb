@@ -153,6 +153,16 @@ install)
     echo ""
     $envbindir/pip install --download-cache=$cachedir "$@"
 ;;
+uninstall)
+    locate_environment
+    shift
+    echo ""
+    echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+    echo " pip uninstall $@"
+    echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+    echo ""
+    $envbindir/pip uninstall "$@"
+;;
 download)
     locate_environment
     shift
