@@ -1,16 +1,20 @@
-orb
-===
+
+Unmaintained. This predates [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/) and
+[pipenv](http://pipenv.readthedocs.io/en/latest/), either of which you should definitely use instead.
+
+h2. orb
+
 
 A utility wrapper for pip_ and virtualenv_.
 
-description
------------
+h2. description
+
 
 A shell script facade for creating virtual python environments via virtualenv_
 and installing packages within the environment via pip_.
 
-install
--------
+h2. install
+
 
 virtualenv_ must be available, eg. in Ubuntu:
 
@@ -26,8 +30,7 @@ or simply copy the orb script from the source distribution, eg. ::
 
     $ sudo cp orb /usr/local/bin
 
-usage
------
+h2. usage
 
 Create a virtualenv with the command
 
